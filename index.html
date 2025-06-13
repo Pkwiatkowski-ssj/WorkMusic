@@ -26,22 +26,33 @@
       z-index: 1000;
     }
 
+    /* Subtle but cool music buttons */
     .music-button {
-      background-color: #00bfff;
-      color: black;
-      padding: 10px 20px;
+      background: linear-gradient(135deg, #00bfff, #0077cc);
+      color: white;
+      padding: 8px 18px;
       border: none;
-      border-radius: 8px;
-      font-weight: bold;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
       cursor: pointer;
-      box-shadow: 0 0 15px #00bfff;
-      transition: all 0.3s ease;
+      box-shadow: 0 0 10px #00bfff88;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       user-select: none;
+      letter-spacing: 1px;
+      text-shadow: 0 0 4px rgba(0, 191, 255, 0.6);
     }
 
     .music-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px #00e1ff;
+      transform: scale(1.08) rotate(-1.5deg);
+      box-shadow:
+        0 0 18px #00e1ffcc,
+        0 0 30px #00e1ffcc;
+    }
+
+    .music-button:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 8px #00bfffaa;
     }
 
     /* Bottom color buttons container */
@@ -69,27 +80,27 @@
     }
 
     .green {
-      background-color: rgba(0, 255, 0, 0.3);
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+      background-color: rgba(0, 255, 0, 0.4);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.9);
       color: #00ff00;
     }
 
     .red {
-      background-color: rgba(255, 0, 0, 0.3);
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-      color: #ff4444;
+      background-color: rgba(255, 40, 40, 0.7);
+      box-shadow: 0 0 25px rgba(255, 40, 40, 1);
+      color: #ff1111;
     }
 
     .blue {
-      background-color: rgba(0, 0, 255, 0.3);
-      box-shadow: 0 0 15px rgba(0, 0, 255, 0.7);
+      background-color: rgba(0, 0, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 0, 255, 0.9);
       color: #4d4dff;
     }
 
     .purple {
-      background-color: rgba(128, 0, 128, 0.3);
-      box-shadow: 0 0 15px rgba(128, 0, 128, 0.7);
-      color: #cc99ff;
+      background-color: rgba(180, 0, 255, 0.7);
+      box-shadow: 0 0 25px rgba(180, 0, 255, 1);
+      color: #dd77ff;
     }
 
     .color-button:hover {
@@ -127,10 +138,10 @@
   <!-- Color Buttons at Bottom -->
   <div id="color-buttons">
     <button class="color-button green" data-color="#00ff00">Green</button>
-    <button class="color-button red" data-color="#ff4444">Red</button>
+    <button class="color-button red" data-color="#ff1111">Red</button>
     <button class="color-button blue" data-color="#00bfff">Blue</button>
-    <button class="color-button purple" data-color="#cc99ff">Purple</button>
-    <button class="color-button rainbow" onclick="activateRainbow()">🌈 Rainbow</button>
+    <button class="color-button purple" data-color="#dd77ff">Purple</button>
+    <button class="color-button rainbow">🌈 Rainbow</button>
   </div>
 
   <script>
@@ -187,15 +198,8 @@
       setupCanvas();
     });
 
-    // Music and colors setup
+    // Music control
     const tracks = ['frequency', 'hz40', 'alpha', 'calm'];
-    const trackColors = {
-      frequency: "#00ff00", // green
-      hz40: "#ff4444",      // red
-      alpha: "#4d4dff",     // blue
-      calm: "#cc99ff",      // purple
-      rainbow: "rainbow"
-    };
 
     function toggleMusic(id) {
       tracks.forEach(trackId => {
@@ -203,12 +207,6 @@
         if (trackId === id) {
           if (audio.paused) {
             audio.play();
-            matrixColor = trackColors[id];
-            if (matrixColor === "rainbow") {
-              enableRainbow = true;
-            } else {
-              enableRainbow = false;
-            }
           } else {
             audio.pause();
           }
@@ -218,33 +216,20 @@
       });
     }
 
-    // Color buttons for manual color changes (not linked to music)
+    // Color buttons control matrix color independently from music
     const colorButtons = document.querySelectorAll('.color-button');
     colorButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const color = btn.getAttribute('data-color');
-        if (color) {
-          matrixColor = color;
-          enableRainbow = false;
 
-          // Pause all music when a color button is clicked
-          tracks.forEach(trackId => {
-            document.getElementById(trackId).pause();
-          });
+        if (btn.classList.contains('rainbow')) {
+          enableRainbow = true;
+        } else {
+          matrixColor = color || matrixColor;
+          enableRainbow = false;
         }
       });
     });
-
-    // Rainbow mode button
-    function activateRainbow() {
-      enableRainbow = true;
-      matrixColor = "rainbow";
-
-      // Pause all music when rainbow mode activated
-      tracks.forEach(trackId => {
-        document.getElementById(trackId).pause();
-      });
-    }
   </script>
 
 </body>
